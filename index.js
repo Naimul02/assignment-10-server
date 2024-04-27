@@ -34,6 +34,12 @@ async function run() {
       const result = await tourists.toArray();
       res.send(result);
     });
+    app.post("/touristSpot" , async(req , res) => {
+        const tourist = req.body;
+        const result = await touristsCollection.insertOne(tourist);
+        res.send(result)
+    })
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
