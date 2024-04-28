@@ -34,7 +34,7 @@ async function run() {
       const result = await tourists.toArray();
       res.send(result);
     });
-    app.get("/tourists/:id", async (rew, res) => {
+    app.get("/tourists/:id", async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
       const result = await touristsCollection.findOne(filter);
