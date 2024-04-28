@@ -46,6 +46,30 @@ async function run() {
       const result = await touristsCollection.insertOne(tourist);
       res.send(result);
     });
+    app.put("/update/:id", async (req, res) => {
+      const update = req.body;
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+
+      const updateDoc = {
+        $set: {
+          name: update.name,
+          email: update.email,
+          image: update.image,
+          tourist_spot_name: update.tourist_spot_name,
+          country_name: update.country_name,
+          location: update.location,
+          short_description: update.short_description,
+          average_cost: update.average_cost,
+          seasonality: update.seasonality,
+          travel_time: update.travel_time,
+          totalVisitorsPerYear: update.totalVisitorsPerYear,
+        },
+      };
+
+      const result = await touristsCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
