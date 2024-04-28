@@ -1,8 +1,8 @@
 const express = require("express");
 require("dotenv").config();
 const app = express();
-const { MongoClient, ServerApiVersion } = require("mongodb");
-const port = process.env.PORT || 5000;
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const port = process.env.PORT || 5001;
 const cors = require("cors");
 
 //middleware
@@ -34,12 +34,18 @@ async function run() {
       const result = await tourists.toArray();
       res.send(result);
     });
-    app.post("/touristSpot" , async(req , res) => {
-        const tourist = req.body;
-        const result = await touristsCollection.insertOne(tourist);
-        res.send(result)
-    })
+    app.get("/tourists/:id", async (rew, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const result = await touristsCollection.findOne(filter);
+      res.send(result);
+    });
 
+    app.post("/touristSpot", async (req, res) => {
+      const tourist = req.body;
+      const result = await touristsCollection.insertOne(tourist);
+      res.send(result);
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
