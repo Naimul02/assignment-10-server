@@ -23,11 +23,16 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     const touristsCollection = client
       .db("touristsDb")
       .collection("touristsData");
+
+    const countriesCollection = client.db("touristsDb").collection("countries");
+    const countriesCollection1 = client
+      .db("touristsDb")
+      .collection("countriesCategories");
 
     app.get("/tourists", async (req, res) => {
       const tourists = touristsCollection.find();
@@ -39,6 +44,29 @@ async function run() {
       const filter = { _id: new ObjectId(id) };
       const result = await touristsCollection.findOne(filter);
       res.send(result);
+    });
+
+    // countries
+    app.get("/countries", async (req, res) => {
+      const countries = countriesCollection.find();
+      const result = await countries.toArray();
+      // console.log(result);
+      res.send(result);
+    });
+    app.get("/countriesDetails", async (req, res) => {
+      const countries = countriesCollection1.find();
+      const result = await countries.toArray();
+      res.send(result);
+    });
+    app.get("/countriesCategories/:country_name", async (req, res) => {
+      const country_name = req.params.country_name;
+      const countries = await countriesCollection1.find().toArray();
+      // console.log(country_name, countries);
+      const query = countries.filter(
+        (country) => country.country_name === country_name
+      );
+      console.log(query);
+      res.send(query);
     });
 
     app.post("/touristSpot", async (req, res) => {
@@ -70,9 +98,16 @@ async function run() {
       const result = await touristsCollection.updateOne(filter, updateDoc);
       res.send(result);
     });
+    app.delete("/touristSpot/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log(id);
+      const query = { _id: new ObjectId(id) };
+      const result = await touristsCollection.deleteOne(query);
+      res.send(result);
+    });
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
